@@ -12,9 +12,12 @@ import 'package:pojek_lucky_wheel/pages/fortune_wheel_history_page.dart';
 import 'package:pojek_lucky_wheel/pages/fortune_wheel_setting_page.dart';
 import 'package:pojek_lucky_wheel/theme.dart';
 import 'package:pojek_lucky_wheel/fortune_wheel_background.dart';
+import 'package:sqflite_common_ffi/sqflite_ffi.dart';
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
+  sqfliteFfiInit();
+  databaseFactory = databaseFactoryFfi;
   runApp(
     MaterialApp(
       debugShowCheckedModeBanner: false,
