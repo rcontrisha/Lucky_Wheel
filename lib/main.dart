@@ -108,12 +108,28 @@ class _MyAppState extends State<MyApp> {
                 fit: BoxFit.fitWidth,
               ),
               const SizedBox(width: 16),
-              const Text(
-                'DINAS PENDIDIKAN PEMUDA DAN OLAHRAGA\nKOTA YOGYAKARTA',
-                style: TextStyle(
-                  color: Colors.white,
-                  fontSize: 10,
-                ),
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    'DINAS PENDIDIKAN PEMUDA DAN OLAHRAGA',
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontSize: 10,
+                    ),
+                  ),
+                  SizedBox(height: 4),
+                  // Tambahkan widget untuk menampilkan judul roda
+                  Text(
+                    _wheel.title ??
+                        'Wheel of Fortune', // Ganti dengan judul roda
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontSize: 16,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ],
               ),
               const Spacer(),
               IconButton(
@@ -123,7 +139,9 @@ class _MyAppState extends State<MyApp> {
                     context,
                     MaterialPageRoute(
                       builder: (context) => FortuneWheelHistoryPage(
-                          resultsHistory: _resultsHistory),
+                        resultsHistory: _resultsHistory,
+                        spinTitle: _wheel.title!,
+                      ),
                     ),
                   );
                 },
@@ -147,6 +165,8 @@ class _MyAppState extends State<MyApp> {
                   if (result != null) {
                     _wheel = result;
                     _painterController.playAnimation();
+                    // Perbarui judul roda di sini
+                    setState(() {});
                   }
                   _resultWheelController.sink.add(_wheel.items[0]);
                   _fortuneWheelController.add(true);
@@ -283,14 +303,14 @@ class _MyAppState extends State<MyApp> {
       version: 1,
     );
     await db.insert('spin_history', {
-      'title': _wheel.titleSpinButton ?? '',
+      'title': _wheel.spinPrize ?? '',
       'time': DateTime.now().toIso8601String(),
       'result': item.titleName ?? '',
     });
 
     // Tambahkan debug print untuk memeriksa data yang disimpan
     print(
-        'Data saved to database: Title = ${_wheel.titleSpinButton}, Result = ${item.titleName}');
+        'Data saved to database: Title = ${_wheel.spinPrize}, Result = ${item.titleName}');
   }
 
   Future<void> _createTable() async {

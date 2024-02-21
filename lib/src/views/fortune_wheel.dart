@@ -159,7 +159,7 @@ class _FortuneWheelState extends State<FortuneWheel>
                 ),
             child: widget.wheel.childSpinButton ??
                 Text(
-                  widget.wheel.titleSpinButton ?? 'Click here to spin',
+                  widget.wheel.spinPrize ?? 'Click here to spin',
                   style: const TextStyle(fontSize: 16, color: Colors.white),
                 ),
           ),

@@ -33,15 +33,17 @@ class _FortuneWheelSettingPageState extends State<FortuneWheelSettingPage> {
 
   late final StreamController<bool> _fortuneValuesController;
 
-  final TextEditingController _titleSpinButtonController =
-      TextEditingController();
+  final TextEditingController spinPrize = TextEditingController();
+
+  final TextEditingController _wheelTitleController = TextEditingController();
 
   @override
   void initState() {
     super.initState();
     _wheel = widget.wheel;
     _durationWheelController.text = _wheel.duration.inSeconds.toString();
-    _titleSpinButtonController.text = _wheel.titleSpinButton ?? '';
+    spinPrize.text = _wheel.spinPrize ?? '';
+    _wheelTitleController.text = _wheel.title ?? '';
     _fortuneValuesController = StreamController<bool>.broadcast();
   }
 
@@ -49,6 +51,7 @@ class _FortuneWheelSettingPageState extends State<FortuneWheelSettingPage> {
   void dispose() {
     super.dispose();
     _durationWheelController.dispose();
+    _wheelTitleController.dispose();
     _fortuneValuesController.close();
   }
 
@@ -89,9 +92,10 @@ class _FortuneWheelSettingPageState extends State<FortuneWheelSettingPage> {
           padding: const EdgeInsets.symmetric(vertical: 16.0),
           child: Column(
             children: [
+              _buildWheelTitle(),
               _buildGameMode(),
               _buildDuration(),
-              _buildEditTitle(),
+              _buildEditPrize(),
               _buildExpansionFortuneValues(),
             ],
           ),
@@ -137,6 +141,31 @@ class _FortuneWheelSettingPageState extends State<FortuneWheelSettingPage> {
       builder: (BuildContext context) {
         return alert;
       },
+    );
+  }
+
+  Widget _buildWheelTitle() {
+    return ListTile(
+      title: const Text(
+        'Wheel Title',
+        style: TextStyle(fontWeight: FontWeight.bold),
+      ),
+      subtitle: Padding(
+        padding: const EdgeInsets.only(right: 8.0, left: 16),
+        child: TextFormField(
+          controller: _wheelTitleController,
+          keyboardType: TextInputType.text,
+          onChanged: (value) {
+            _wheel = _wheel.copyWith(
+              title: _wheelTitleController.text,
+            );
+          },
+          decoration: const InputDecoration(
+            hintText: 'Enter wheel title',
+            hintStyle: TextStyle(color: Colors.grey),
+          ),
+        ),
+      ),
     );
   }
 
@@ -286,24 +315,24 @@ class _FortuneWheelSettingPageState extends State<FortuneWheelSettingPage> {
     );
   }
 
-  Widget _buildEditTitle() {
+  Widget _buildEditPrize() {
     return ListTile(
       title: const Text(
-        'Spin button title',
+        'Wheel Prize (Spin Button)',
         style: TextStyle(fontWeight: FontWeight.bold),
       ),
       subtitle: Padding(
         padding: const EdgeInsets.only(right: 8.0, left: 16),
         child: TextFormField(
-          controller: _titleSpinButtonController,
+          controller: spinPrize,
           keyboardType: TextInputType.text,
           onChanged: (value) {
             _wheel = _wheel.copyWith(
-              titleSpinButton: _titleSpinButtonController.text,
+              spinPrize: spinPrize.text,
             );
           },
           decoration: const InputDecoration(
-            hintText: 'Enter spin button title',
+            hintText: 'Enter Wheel Prize',
             hintStyle: TextStyle(color: Colors.grey),
           ),
         ),

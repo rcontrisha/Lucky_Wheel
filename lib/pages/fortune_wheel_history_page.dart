@@ -5,10 +5,12 @@ import 'package:path/path.dart';
 
 class FortuneWheelHistoryPage extends StatefulWidget {
   final List<Fortune> resultsHistory;
+  final String spinTitle;
 
   const FortuneWheelHistoryPage({
     Key? key,
     required this.resultsHistory, // Tambahkan parameter ini
+    required this.spinTitle,
   }) : super(key: key);
 
   @override
@@ -59,10 +61,23 @@ class _FortuneWheelHistoryPageState extends State<FortuneWheelHistoryPage> {
     });
   }
 
+  Future<void> _deleteSpinHistory(int id) async {
+    final db = await _openDatabase();
+    await db.delete(
+      'spin_history',
+      where: 'id = ?',
+      whereArgs: [id],
+    );
+    setState(() {
+      // Memuat kembali daftar riwayat setelah penghapusan
+      _spinHistory = _fetchSpinHistory();
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('Spin history')),
+      appBar: AppBar(title: Text(widget.spinTitle)),
       body: FutureBuilder<List<SpinHistory>>(
         future: _spinHistory,
         builder: (context, snapshot) {
@@ -78,15 +93,27 @@ class _FortuneWheelHistoryPageState extends State<FortuneWheelHistoryPage> {
             padding: const EdgeInsets.all(16),
             itemBuilder: (context, index) {
               final history = spinHistory[index];
-              return ListTile(
-                title: Text('Result ${history.id}'),
-                subtitle: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text('Time: ${history.time}'),
-                    Text('Title: ${history.title}'),
-                    Text('Result: ${history.result}'),
-                  ],
+              return Dismissible(
+                key: Key(history.id.toString()),
+                onDismissed: (direction) {
+                  _deleteSpinHistory(history.id);
+                },
+                background: Container(
+                  color: Colors.red,
+                  alignment: Alignment.centerRight,
+                  padding: const EdgeInsets.only(right: 16),
+                  child: Icon(Icons.delete, color: Colors.white),
+                ),
+                child: ListTile(
+                  title: Text('Result ${history.id}'),
+                  subtitle: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text('Time: ${history.time}'),
+                      Text('Title: ${history.title}'),
+                      Text('Result: ${history.result}'),
+                    ],
+                  ),
                 ),
               );
             },
